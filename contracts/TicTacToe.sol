@@ -49,6 +49,13 @@ contract TicTacToe {
       **/    
     function _threeInALine(uint a, uint b, uint c) private view returns (bool){
         /*Please complete the code here.*/
+        if (board[a] != board[b]) {
+          return false;
+        }
+        if (board[b] != board[c]) {
+          return false;
+        }
+        return true;
     }
 
     /**
@@ -58,6 +65,26 @@ contract TicTacToe {
      */
     function _getStatus(uint pos) private view returns (uint) {
         /*Please complete the code here.*/
+        uint8[3][8] memory winningPositions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+        uint[9] memory _board = board;
+        _board[pos] = turn;
+
+        bool hasEnded = true;
+
+        for (uint i = 0; i < winningPositions.length; i++) {
+          bool isThreeInALine = _threeInALine(winningPositions[i][0], winningPositions[i][1], winningPositions[i][2]);
+          if (!isThreeInALine) {
+            return winningPositions[i][0];
+          }
+
+          hasEnded = hasEnded && winningPositions[i][0] != 0 && winningPositions[i][1] != 0 && winningPositions[i][1] != 0; 
+        }
+
+        if (hasEnded) {
+          return 3;
+        }
+
+        return 0;
     }
 
     /**
@@ -67,6 +94,10 @@ contract TicTacToe {
      */
     modifier _checkStatus(uint pos) {
         /*Please complete the code here.*/
+        require(status == 0);
+        board[pos] = turn;
+        status = _getStatus(pos);
+        _;
     }
 
     /**
@@ -75,6 +106,7 @@ contract TicTacToe {
      */
     function myTurn() public view returns (bool) {
        /*Please complete the code here.*/
+       return players[turn - 1] == msg.sender;
     }
 
     /**
@@ -83,6 +115,9 @@ contract TicTacToe {
      */
     modifier _myTurn() {
       /*Please complete the code here.*/
+      require(myTurn());
+      turn = 3 - turn;
+      _;
     }
 
     /**
@@ -92,6 +127,7 @@ contract TicTacToe {
      */
     function validMove(uint pos) public view returns (bool) {
       /*Please complete the code here.*/
+      return board[pos] == 0;
     }
 
     /**
@@ -100,6 +136,8 @@ contract TicTacToe {
      */
     modifier _validMove(uint pos) {
       /*Please complete the code here.*/
+      require(validMove(pos));
+      _;
     }
 
     /**
