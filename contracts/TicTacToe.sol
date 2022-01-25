@@ -66,18 +66,16 @@ contract TicTacToe {
     function _getStatus(uint pos) private view returns (uint) {
         /*Please complete the code here.*/
         uint8[3][8] memory winningPositions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-        uint[9] memory _board = board;
-        _board[pos] = turn;
 
         bool hasEnded = true;
 
         for (uint i = 0; i < winningPositions.length; i++) {
           bool isThreeInALine = _threeInALine(winningPositions[i][0], winningPositions[i][1], winningPositions[i][2]);
-          if (!isThreeInALine) {
-            return winningPositions[i][0];
+          if (isThreeInALine) {
+            return board[winningPositions[i][0]];
           }
 
-          hasEnded = hasEnded && winningPositions[i][0] != 0 && winningPositions[i][1] != 0 && winningPositions[i][1] != 0; 
+          hasEnded = hasEnded && board[winningPositions[i][0]] != 0 && board[winningPositions[i][1]] != 0 && board[winningPositions[i][1]] != 0; 
         }
 
         if (hasEnded) {
@@ -95,9 +93,8 @@ contract TicTacToe {
     modifier _checkStatus(uint pos) {
         /*Please complete the code here.*/
         require(status == 0);
-        board[pos] = turn;
-        status = _getStatus(pos);
         _;
+        status = _getStatus(pos);
     }
 
     /**
@@ -116,8 +113,8 @@ contract TicTacToe {
     modifier _myTurn() {
       /*Please complete the code here.*/
       require(myTurn());
-      turn = 3 - turn;
       _;
+      turn = 3 - turn;
     }
 
     /**
